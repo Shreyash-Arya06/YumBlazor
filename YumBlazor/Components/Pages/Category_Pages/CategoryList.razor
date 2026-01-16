@@ -22,7 +22,9 @@ else
 		<div class="card-body p-4">
 			<div class="row pb-3">
 				<div class="col-12 text-end">
-					<a href="category/create" class="btn btn-secondary btn-lg" style="width:250px;">Add New Category</a>
+					<a href="category/create" class="btn btn-secondary btn-lg" style="width:250px;">
+						<i class="bi bi-plus-square"></i> Add New Category
+					</a>
 				</div>
 			</div>
 			
@@ -42,10 +44,10 @@ else
 								<td>@obj.Name</td>
 								<td>
 									<a href="@($"category/update/{obj.Id}")" class="btn btn-primary">
-										Edit
+										<i class="bi bi-pencil-square"></i> Edit
 									</a>
 									<button class="btn btn-danger">
-										Delete
+										<i class="bi bi-trash3"></i> Delete
 									</button>
 								</td>
 							</tr>
@@ -56,6 +58,7 @@ else
 		</div>
 	</div>
 }
+
 
 @code {
 	private bool IsProcessing { get; set; } = true;
@@ -86,6 +89,7 @@ else
 			StateHasChanged(); // Notify UI to update with loaded data
 		}
 	}
+
 	private async Task LoadCategories()
 	{
 		// Thread.Sleep(3000); Simulate a delay
