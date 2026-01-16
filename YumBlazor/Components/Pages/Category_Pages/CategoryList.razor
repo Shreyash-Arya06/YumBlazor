@@ -53,19 +53,37 @@ else
 }
 
 @code {
-	private bool IsProcessing { get; set; } = false;
+	private bool IsProcessing { get; set; } = true;
 	private IEnumerable<Category> Categories { get; set; } = new List<Category>();
 
-	protected override async Task OnInitializedAsync()
-	{
-		IsProcessing = true;
-		await Task.Delay(2000);
-		LoadCategories();
-		IsProcessing = false;
-	}
+	// This is great way to fetch data, but manytime blazor randors on server and again on client,
+	// so OnInitializedAsync will be called twice. In global server there is no issue, but in particular 
+	// page server setup, OnInitializedAsync may be called again, which is not ideal.
+	// So better to use OnAfterRenderAsync with a flag to check first render.
+	// protected override async Task OnInitializedAsync()
+	// {
+	// 	IsProcessing = true;
+	// // 	await Task.Delay(2000);
+	// // 	await Task.Yield();
+	// 	await LoadCategories();
+	// 	IsProcessing = false;
+	// }
 
-	private void LoadCategories()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		Categories = _categoryRepository.GetAll();
+		if (firstRender)
+		{
+			// if IsProcessing is initally true, then no need of below 2 statements
+			// IsProcessing = true;
+			// StateHasChanged(); Notify UI to show loading state
+			await LoadCategories();
+			IsProcessing = false;
+			StateHasChanged(); // Notify UI to update with loaded data
+		}
+	}
+	private async Task LoadCategories()
+	{
+		// Thread.Sleep(3000); Simulate a delay
+		Categories = await _categoryRepository.GetAllAsync();
 	}
 }
